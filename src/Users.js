@@ -9,6 +9,8 @@ export default function Users() {
     const [users, setUsers] = useState([])
     const [modal, setModal] = useState(false)
     const [detail, setDetail] = useState('')
+    const [search, setSearch] = useState('');
+    const [data, setData] = useState([]);
 
     const handleClose = () => setModal(false);
 
@@ -20,8 +22,16 @@ export default function Users() {
             }
         })
     }
-
-    console.log(detail)
+    const handleChange = (e) => {
+        setSearch(e.target.value)
+    }
+    useEffect(() => {
+        setData(users)
+    }, [])
+    useEffect(() => {
+        setData(users.filter((user) =>
+            user.name.toLowerCase().includes(search.toLowerCase())))
+    }, [search, users])
 
     const fetchUsers = async () => {
         try {
@@ -35,7 +45,7 @@ export default function Users() {
         fetchUsers();
     }, [])
 
-    const row = users.map((user, i) => {
+    const row = data.map((user, i) => {
         return (
             <tr key={i}>
                 <td>{user.id}</td>
@@ -50,6 +60,15 @@ export default function Users() {
         )
     })
     return (<div className="container mt-sm-4">
+        <div className="container mb-4">
+            <input type="text"
+                className="inputText"
+                onChange={handleChange}
+                value={search}
+                placeholder="Search user name..."
+            >
+            </input>
+        </div>
         <Table striped bordered hover variant="dark">
             <thead>
                 <tr>
